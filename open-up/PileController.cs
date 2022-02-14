@@ -50,7 +50,7 @@ namespace open_up
                 ");
                 var proc = new Process
                 {
-                    StartInfo = new() { FileName = env.ContentRootPath + "/AutoHotkey64.exe" }
+                    StartInfo = new() { FileName = "c:/opt/bin/AutoHotkey64.exe" }
                 };
                 proc.StartInfo.ArgumentList.Add(scriptFile);
                 proc.Start();

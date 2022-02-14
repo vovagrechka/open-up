@@ -29,7 +29,8 @@ namespace open_up
             {
                 var proc = new Process
                 {
-                    StartInfo = new() { FileName = @"C:\Program Files\JetBrains\WebStorm 2021.3.1\bin\webstorm64.exe" }
+                    // StartInfo = new() { FileName = @"C:\Program Files\JetBrains\WebStorm 2021.3.1\bin\webstorm64.exe" }
+                    StartInfo = new() { FileName = @"C:\Program Files (x86)\JetBrains\WebStorm 2021.3.2\bin\webstorm64.exe" }
                 };
                 foreach (var x in new[] {
                     "--line", "" + line,

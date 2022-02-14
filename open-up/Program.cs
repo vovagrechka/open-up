@@ -1,10 +1,18 @@
-Console.WriteLine("hhhhhhhhhhhhhhhhhh 11111");
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddCors(o => {
+    o.AddDefaultPolicy(o => {
+        o.AllowAnyOrigin();
+        o.AllowAnyMethod();
+        o.AllowAnyHeader();
+    });
+});
+
+builder.WebHost.UseUrls("http://localhost:3111");
 
 var app = builder.Build();
 

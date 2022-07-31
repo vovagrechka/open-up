@@ -1,9 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-
 builder.Services.AddCors(o => {
     o.AddDefaultPolicy(o => {
         o.AllowAnyOrigin();
@@ -12,14 +8,12 @@ builder.Services.AddCors(o => {
     });
 });
 
+builder.Services.AddControllers();
 builder.WebHost.UseUrls("http://localhost:3111");
 
+
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-
+app.UseCors();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

@@ -1,0 +1,11 @@
+{
+  "name": "script-kiddie",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "@types/chrome": "^0.0.237"
+  },
+  "volta": {
+    "node": "18.16.0"
+  }
+}

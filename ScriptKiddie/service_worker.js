@@ -13,8 +13,19 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === id_jira_copyAttachmentLink) {
         chrome.scripting.executeScript({
             target: {tabId: tab.id},
-            func: function() {
-                console.log("hi there")
+            args: [info],
+
+            /**
+             * @param info {chrome.contextMenus.OnClickData}
+             */
+            func: function(info) {
+                // console.log("=== info", info)
+                const el = document.querySelector("img[src='" + info.srcUrl + "']")
+                if (!el) {
+                    alert("I don't understand this page, sorry")
+                    return
+                }
+                alert("Wow")
             }
         })
     }

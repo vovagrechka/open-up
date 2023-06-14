@@ -1,0 +1,30 @@
+{
+  "include": [
+    "src"
+  ],
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "obj",
+    "baseUrl": "src",
+    "target": "ES2020",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "None",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitThis": true,
+    "experimentalDecorators": true
+  }
+}

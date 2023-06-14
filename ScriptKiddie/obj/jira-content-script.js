@@ -1,5 +1,12 @@
 "use strict";
-console.log("AAAAA 2");
+console.log("AAAAA 3");
+window.addEventListener("keydown", e => {
+    if (e.altKey && e.key === "q") {
+        e.preventDefault();
+        e.stopPropagation();
+        chrome.runtime.sendMessage({ action: "reloadExtension" });
+    }
+}, true);
 chrome.runtime.onMessage.addListener(_msg => {
     const msg = _msg;
     if (msg.action === "contentScriptLog") {

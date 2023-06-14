@@ -9,7 +9,10 @@ chrome.runtime.onMessage.addListener(async _msg => {
             return
         }
         
-        await chrome.tabs.sendMessage<Msg>(tab.id, {action: "contentScriptLog", data: "reloading extension"})
+        chrome.runtime.reload()
+        await chrome.tabs.reload()
+        
+        // await chrome.tabs.sendMessage<Msg>(tab.id, {action: "contentScriptLog", data: "reloading extension"})
     }
 })
 

@@ -8,7 +8,9 @@ chrome.runtime.onMessage.addListener(async (_msg) => {
             console.log("[ERROR] No active tab ID");
             return;
         }
-        await chrome.tabs.sendMessage(tab.id, { action: "contentScriptLog", data: "reloading extension" });
+        chrome.runtime.reload();
+        await chrome.tabs.reload();
+        // await chrome.tabs.sendMessage<Msg>(tab.id, {action: "contentScriptLog", data: "reloading extension"})
     }
 });
 chrome.runtime.onInstalled.addListener(function () {

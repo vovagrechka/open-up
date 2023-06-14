@@ -1,4 +1,12 @@
-console.log("AAAAA 2")
+console.log("AAAAA 3")
+
+window.addEventListener("keydown", e => {
+  if (e.altKey && e.key === "q") {
+    e.preventDefault()
+    e.stopPropagation()
+    chrome.runtime.sendMessage<Msg>({action: "reloadExtension"})
+  }
+}, true)
 
 chrome.runtime.onMessage.addListener(_msg => {
   const msg = _msg as Msg

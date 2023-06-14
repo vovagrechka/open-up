@@ -21,9 +21,11 @@ chrome.runtime.onMessage.addListener(_msg => {
         console.log("[CSL]", msg.data);
     }
     else if (msg.action === "menuItem_copyAttachmentLink")
-        handle_menuItem_copyAttachmentLink();
+        handle_menuItem_copyAttachmentSomething(_ => _);
+    else if (msg.action === "menuItem_copyDocImgTag")
+        handle_menuItem_copyAttachmentSomething(_ => '<DocImg src="' + _ + '" width={700}/>');
 });
-async function handle_menuItem_copyAttachmentLink() {
+async function handle_menuItem_copyAttachmentSomething(processLink) {
     try {
         if (!g.fileNameForContextMenu)
             throw Error("Unable to guess file name for context menu");
@@ -42,8 +44,8 @@ async function handle_menuItem_copyAttachmentLink() {
             throw Error("Can't find attachment object for file " + g.fileNameForContextMenu);
         const attachmentId = att.id;
         const url = "https://bydeluxe.atlassian.net/secure/attachment/" + attachmentId + "/" + g.fileNameForContextMenu;
-        await navigator.clipboard.writeText(url);
-        showSuccessToast("Copied URL to clipboard");
+        await navigator.clipboard.writeText(processLink(url));
+        showSuccessToast("Copied stuff to clipboard");
     }
     catch (e) {
         console.error(e);

@@ -23,12 +23,16 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://bydeluxe.atlassian.net/*"
-      ],
-      "js": [
-        "obj/jira-content-script.js"
-      ]
+      "matches": ["<all_urls>"],
+      "js": ["obj/content-script-common.js"]
+    },
+    {
+      "matches": ["https://bydeluxe.atlassian.net/*"],
+      "js": ["obj/content-script-common.js", "obj/jira-content-script.js"]
+    },
+    {
+      "matches": ["https://chat.openai.com/*"],
+      "js": ["obj/content-script-common.js", "obj/gpt-content-script.js"]
     }
   ]
 }

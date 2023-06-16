@@ -1,29 +1,18 @@
 "use strict";
 const g = new class {
 };
-// g.elConsole = document.createElement("div")
-// g.elConsole.setAttribute("style", "position: fixed; left: 0; top: 0; right: 0; height: 100px; background: #ccc; border: 3px solid black; z-index: 2147483647;")
-// g.elConsole.innerText = "Hi there :)"
-// document.body.append(g.elConsole)
-window.addEventListener("keydown", e => {
-    if (e.altKey && e.key === "q") {
-        e.preventDefault();
-        e.stopPropagation();
-        sendMsgToServiceWorker({ action: "reloadExtension" }, () => {
-            console.log("======= RELOADED EXTENSION ========");
-            window.location.reload();
+initContentScript();
+addMsgHandler(msg => {
+    if (msg.action === "menuItem_copyAttachmentLink")
+        handle_menuItem_copyAttachmentSomething(_ => _);
+    else if (msg.action === "menuItem_copyDocImgTag") {
+        handle_menuItem_copyAttachmentSomething(url => {
+            let tag = "DocImg";
+            if (url.endsWith(".avi") || url.endsWith(".mp4") || url.endsWith(".webm"))
+                tag = "DocVideo";
+            return '<' + tag + ' src="' + url + '" width={700}/>';
         });
     }
-}, true);
-chrome.runtime.onMessage.addListener(_msg => {
-    const msg = _msg;
-    if (msg.action === "contentScriptLog") {
-        console.log("[CSL]", msg.data);
-    }
-    else if (msg.action === "menuItem_copyAttachmentLink")
-        handle_menuItem_copyAttachmentSomething(_ => _);
-    else if (msg.action === "menuItem_copyDocImgTag")
-        handle_menuItem_copyAttachmentSomething(_ => '<DocImg src="' + _ + '" width={700}/>');
 });
 async function handle_menuItem_copyAttachmentSomething(processLink) {
     try {
@@ -76,22 +65,4 @@ window.addEventListener("contextmenu", e => {
         }
     }
 }, true);
-function* selfAndParentElements(el) {
-    yield el;
-    while ((el = el.parentElement) != null) {
-        yield el;
-    }
-}
-function sendMsgToServiceWorker(msg, cb) {
-    cb ?? (cb = () => { });
-    chrome.runtime.sendMessage(msg, cb);
-}
-function showSuccessToast(msg) {
-    const elToast = document.createElement("div");
-    elToast.setAttribute("style", "position: fixed; left: 10px; top: 10px; right: 10px; font-family: sans-serif; " +
-        "font-size: 24px; z-index: 2147483647; background: #0d0; border: 3px solid black; padding: 5px; font-weight: bold;");
-    elToast.innerText = msg;
-    document.body.append(elToast);
-    window.setTimeout(() => elToast.remove(), 1500);
-}
 //# sourceMappingURL=jira-content-script.js.map

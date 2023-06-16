@@ -27,7 +27,7 @@ chrome.runtime.onInstalled.addListener(function () {
     chrome.contextMenus.create({
         id: id.copyDocImgTag,
         title: "Jira: Copy <DocImg> tag",
-        contexts: ["image"],
+        contexts: ["all"],
         documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"]
     });
 });

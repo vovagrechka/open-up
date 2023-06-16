@@ -1,6 +1,4 @@
 "use strict";
-const g = new class {
-};
 initIdTrackingOrAssigningContextMenu();
 addMenuItemHandler("Jira: Copy attachment link", () => handle_menuItem_copyAttachmentSomething(_ => _));
 addMenuItemHandler("Jira: Copy <DocImg> tag", () => {
@@ -60,31 +58,4 @@ async function handle_menuItem_copyAttachmentSomething(processLink) {
         alert("[ERROR] " + e.message);
     }
 }
-// window.addEventListener("contextmenu", e => {
-//   g.fileNameForContextMenu = undefined
-//
-//   if (e.target instanceof HTMLElement) {
-//     for (const el of selfAndParentElements(e.target)) {
-//
-//       if (el instanceof HTMLImageElement) {
-//         const s = el.parentElement?.getAttribute("data-test-media-name")
-//         if (s) {
-//           g.fileNameForContextMenu = s
-//           return
-//         }
-//       }
-//
-//       else if (el.getAttribute("data-type") === "file" && el.getAttribute("data-node-type") === "media") {
-//         const mime = el.getAttribute("data-file-mime-type")
-//         if (mime === "video/x-msvideo" || mime === "video/mp4" || mime === "video/mpeg" || mime === "video/webm") {
-//           const s = el.getAttribute("data-file-name")
-//           if (s) {
-//             g.fileNameForContextMenu = s
-//             return
-//           }
-//         }
-//       }
-//     }
-//   }
-// }, true)
 //# sourceMappingURL=jira-content-script.js.map

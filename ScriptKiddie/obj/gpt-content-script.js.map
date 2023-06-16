@@ -1,1 +1,1 @@
-{"version":3,"file":"gpt-content-script.js","sourceRoot":"","sources":["../src/gpt-content-script.ts"],"names":[],"mappings":""}
+{"version":3,"file":"gpt-content-script.js","sourceRoot":"","sources":["../src/gpt-content-script.ts"],"names":[],"mappings":";AAAA,oCAAoC,EAAE,CAAA;AAEtC,kBAAkB,CAAC,4BAA4B,EAAE,GAAG,EAAE;IACpD,IAAI,CAAC,CAAC,CAAC,sBAAsB;QAC3B,OAAM;IAER,OAAO,CAAC,GAAG,CAAC,MAAM,EAAE,CAAC,CAAC,sBAAsB,CAAC,CAAA;AAC/C,CAAC,CAAC,CAAA"}

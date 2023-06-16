@@ -1,7 +1,3 @@
-initContentScript()
-
-addMsgHandler(msg => {
-})
 
 
 

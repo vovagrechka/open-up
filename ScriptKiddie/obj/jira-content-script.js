@@ -1,22 +1,41 @@
 "use strict";
 const g = new class {
 };
-initContentScript();
-addMsgHandler(msg => {
-    if (msg.action === "menuItem_copyAttachmentLink")
-        handle_menuItem_copyAttachmentSomething(_ => _);
-    else if (msg.action === "menuItem_copyDocImgTag") {
-        handle_menuItem_copyAttachmentSomething(url => {
-            let tag = "DocImg";
-            if (url.endsWith(".avi") || url.endsWith(".mp4") || url.endsWith(".webm"))
-                tag = "DocVideo";
-            return '<' + tag + ' src="' + url + '" width={700}/>';
-        });
-    }
+initIdTrackingOrAssigningContextMenu();
+addMenuItemHandler("Jira: Copy attachment link", () => handle_menuItem_copyAttachmentSomething(_ => _));
+addMenuItemHandler("Jira: Copy <DocImg> tag", () => {
+    handle_menuItem_copyAttachmentSomething(url => {
+        let tag = "DocImg";
+        if (url.endsWith(".avi") || url.endsWith(".mp4") || url.endsWith(".webm"))
+            tag = "DocVideo";
+        return '<' + tag + ' src="' + url + '" width={700}/>';
+    });
 });
 async function handle_menuItem_copyAttachmentSomething(processLink) {
     try {
-        if (!g.fileNameForContextMenu)
+        const fileName = run(() => {
+            if (!G.contextMenuTargetDomid)
+                return undefined;
+            const elTarget = document.getElementById(G.contextMenuTargetDomid);
+            if (!(elTarget instanceof HTMLElement))
+                return undefined;
+            for (const el of selfAndParentElements(elTarget)) {
+                if (el instanceof HTMLImageElement) {
+                    const s = el.parentElement?.getAttribute("data-test-media-name");
+                    if (s)
+                        return s;
+                }
+                else if (el.getAttribute("data-type") === "file" && el.getAttribute("data-node-type") === "media") {
+                    const mime = el.getAttribute("data-file-mime-type");
+                    if (mime === "video/x-msvideo" || mime === "video/mp4" || mime === "video/mpeg" || mime === "video/webm") {
+                        const s = el.getAttribute("data-file-name");
+                        if (s)
+                            return s;
+                    }
+                }
+            }
+        });
+        if (!fileName)
             throw Error("Unable to guess file name for context menu");
         const m = window.location.pathname.match(/\/browse\/(.*)$/);
         if (!m)
@@ -28,11 +47,11 @@ async function handle_menuItem_copyAttachmentSomething(processLink) {
         const json = await res.json();
         if (!Array.isArray(json.fields.attachment))
             throw Error("No suitable `attachment` field in API response");
-        const att = json.fields.attachment.find((_) => _.filename === g.fileNameForContextMenu);
+        const att = json.fields.attachment.find((_) => _.filename === fileName);
         if (!att)
-            throw Error("Can't find attachment object for file " + g.fileNameForContextMenu);
+            throw Error("Can't find attachment object for file " + fileName);
         const attachmentId = att.id;
-        const url = "https://bydeluxe.atlassian.net/secure/attachment/" + attachmentId + "/" + g.fileNameForContextMenu;
+        const url = "https://bydeluxe.atlassian.net/secure/attachment/" + attachmentId + "/" + fileName;
         await navigator.clipboard.writeText(processLink(url));
         showSuccessToast("Copied stuff to clipboard");
     }
@@ -41,28 +60,31 @@ async function handle_menuItem_copyAttachmentSomething(processLink) {
         alert("[ERROR] " + e.message);
     }
 }
-window.addEventListener("contextmenu", e => {
-    g.fileNameForContextMenu = undefined;
-    if (e.target instanceof HTMLElement) {
-        for (const el of selfAndParentElements(e.target)) {
-            if (el instanceof HTMLImageElement) {
-                const s = el.parentElement?.getAttribute("data-test-media-name");
-                if (s) {
-                    g.fileNameForContextMenu = s;
-                    return;
-                }
-            }
-            else if (el.getAttribute("data-type") === "file" && el.getAttribute("data-node-type") === "media") {
-                const mime = el.getAttribute("data-file-mime-type");
-                if (mime === "video/x-msvideo" || mime === "video/mp4" || mime === "video/mpeg" || mime === "video/webm") {
-                    const s = el.getAttribute("data-file-name");
-                    if (s) {
-                        g.fileNameForContextMenu = s;
-                        return;
-                    }
-                }
-            }
-        }
-    }
-}, true);
+// window.addEventListener("contextmenu", e => {
+//   g.fileNameForContextMenu = undefined
+//
+//   if (e.target instanceof HTMLElement) {
+//     for (const el of selfAndParentElements(e.target)) {
+//
+//       if (el instanceof HTMLImageElement) {
+//         const s = el.parentElement?.getAttribute("data-test-media-name")
+//         if (s) {
+//           g.fileNameForContextMenu = s
+//           return
+//         }
+//       }
+//
+//       else if (el.getAttribute("data-type") === "file" && el.getAttribute("data-node-type") === "media") {
+//         const mime = el.getAttribute("data-file-mime-type")
+//         if (mime === "video/x-msvideo" || mime === "video/mp4" || mime === "video/mpeg" || mime === "video/webm") {
+//           const s = el.getAttribute("data-file-name")
+//           if (s) {
+//             g.fileNameForContextMenu = s
+//             return
+//           }
+//         }
+//       }
+//     }
+//   }
+// }, true)
 //# sourceMappingURL=jira-content-script.js.map

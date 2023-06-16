@@ -1,5 +1,27 @@
 const G = new class {
   elConsole!: HTMLElement
+  domidCounter = 1
+  contextMenuTargetDomid?: string
+}
+
+initContentScript()
+
+
+function nextDomid(): string {
+  return "___domid_" + (G.domidCounter++)
+}
+
+function initIdTrackingOrAssigningContextMenu() {
+  window.addEventListener("contextmenu", e => {
+    G.contextMenuTargetDomid = undefined
+
+    if (e.target instanceof HTMLElement) {
+      if (!e.target.id)
+        e.target.id = nextDomid()
+
+      G.contextMenuTargetDomid = e.target.id
+    }
+  }, true)
 }
 
 function initContentScript() {
@@ -13,7 +35,7 @@ function initContentScript() {
       })
     }
   }, true)
-  
+
   addMsgHandler(msg => {
     if (msg.action === "contentScriptLog")
       console.log("[CSL]", msg.data)
@@ -28,6 +50,13 @@ function initContentScript() {
 function addMsgHandler(f: (msg: Msg) => void) {
   chrome.runtime.onMessage.addListener(_msg => {
     f(_msg as Msg)
+  })
+}
+
+function addMenuItemHandler(what: MenuItem, f: () => void) {
+  addMsgHandler(msg => {
+    if (msg.action === "menuItem" && msg.what === what)
+      f()
   })
 }
 
@@ -51,4 +80,8 @@ function showSuccessToast(msg: string) {
   elToast.innerText = msg
   document.body.append(elToast)
   window.setTimeout(() => elToast.remove(), 1500)
+}
+
+function run<T>(f: () => T): T {
+  return f()
 }

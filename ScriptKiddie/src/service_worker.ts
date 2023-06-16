@@ -1,6 +1,42 @@
-const id = {
-  copyAttachmentLink: "925AA4E5-82FE-49D5-AEDE-0F1E378757C8",
-  copyDocImgTag: "ACE35220-6D03-4B08-82DF-010E0618AA7D",
+import ContextType = chrome.contextMenus.ContextType
+
+const menuItemIdToAction = new Map<string, () => void>()
+
+function defineMenuItem(p: {
+  title: string
+  contexts?: ContextType | ContextType[] | undefined
+  documentUrlPatterns?: string[] | undefined
+  act(): void
+}) {
+  const id = p.title
+  if (menuItemIdToAction.has(id))
+    throw Error("Duplicate menu item ID: " + id)
+
+  menuItemIdToAction.set(id, p.act)
+
+  const contexts = p.contexts ?? ["all"]
+
+  chrome.contextMenus.create({
+    id,
+    title: p.title,
+    contexts,
+    documentUrlPatterns: p.documentUrlPatterns
+  })
+}
+
+function defineMessageSendingMenuItem(p: {
+  title: MenuItem
+  contexts?: ContextType | ContextType[]
+  documentUrlPatterns?: string[]
+}) {
+  defineMenuItem({
+    title: p.title,
+    contexts: p.contexts,
+    documentUrlPatterns: p.documentUrlPatterns,
+    act() {
+      sendMsgToActiveTab({action: "menuItem", what: p.title})
+    }
+  })
 }
 
 async function sendMsgToActiveTab(msg: Msg) {
@@ -21,25 +57,32 @@ chrome.runtime.onMessage.addListener(async _msg => {
 })
 
 chrome.runtime.onInstalled.addListener(function () {
-  chrome.contextMenus.create({
-    id: id.copyAttachmentLink,
+  defineMessageSendingMenuItem({
     title: "Jira: Copy attachment link",
     contexts: ["all"],
-    documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"]
+    documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
   })
 
-  chrome.contextMenus.create({
-    id: id.copyDocImgTag,
+  defineMessageSendingMenuItem({
     title: "Jira: Copy <DocImg> tag",
     contexts: ["all"],
-    documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"]
+    documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
+  })
+
+  defineMessageSendingMenuItem({
+    title: "GPT: Copy quoted paragraph",
+    contexts: ["all"],
+    documentUrlPatterns: ["https://chat.openai.com/*"]
   })
 })
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === id.copyAttachmentLink)
-    sendMsgToActiveTab({action: "menuItem_copyAttachmentLink"})
-  else if (info.menuItemId === id.copyDocImgTag)
-    sendMsgToActiveTab({action: "menuItem_copyDocImgTag"})
+  if (typeof info.menuItemId === "string") {
+    const act = menuItemIdToAction.get(info.menuItemId)
+    if (!act)
+      throw Error("Menu item not defined: " + info.menuItemId)
+    
+    act()
+  }
 })
 

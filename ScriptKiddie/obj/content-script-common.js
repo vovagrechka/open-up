@@ -1,6 +1,23 @@
 "use strict";
 const G = new class {
+    constructor() {
+        this.domidCounter = 1;
+    }
 };
+initContentScript();
+function nextDomid() {
+    return "___domid_" + (G.domidCounter++);
+}
+function initIdTrackingOrAssigningContextMenu() {
+    window.addEventListener("contextmenu", e => {
+        G.contextMenuTargetDomid = undefined;
+        if (e.target instanceof HTMLElement) {
+            if (!e.target.id)
+                e.target.id = nextDomid();
+            G.contextMenuTargetDomid = e.target.id;
+        }
+    }, true);
+}
 function initContentScript() {
     window.addEventListener("keydown", e => {
         if (e.altKey && e.key === "q") {
@@ -26,6 +43,12 @@ function addMsgHandler(f) {
         f(_msg);
     });
 }
+function addMenuItemHandler(what, f) {
+    addMsgHandler(msg => {
+        if (msg.action === "menuItem" && msg.what === what)
+            f();
+    });
+}
 function* selfAndParentElements(el) {
     yield el;
     while ((el = el.parentElement) != null) {
@@ -44,5 +67,8 @@ function showSuccessToast(msg) {
     elToast.innerText = msg;
     document.body.append(elToast);
     window.setTimeout(() => elToast.remove(), 1500);
+}
+function run(f) {
+    return f();
 }
 //# sourceMappingURL=content-script-common.js.map

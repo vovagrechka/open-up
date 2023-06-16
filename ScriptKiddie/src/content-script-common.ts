@@ -55,8 +55,15 @@ function addMsgHandler(f: (msg: Msg) => void) {
 
 function addMenuItemHandler(what: MenuItem, f: () => void) {
   addMsgHandler(msg => {
-    if (msg.action === "menuItem" && msg.what === what)
-      f()
+    if (msg.action === "menuItem" && msg.what === what) {
+      try {
+        f()
+      }
+      catch (e: any) {
+        console.error(e)
+        alert("[ERROR] " + e.message)
+      }
+    }
   })
 }
 
@@ -73,15 +80,38 @@ function sendMsgToServiceWorker(msg: Msg, cb?: (res: any) => void) {
   chrome.runtime.sendMessage(msg, cb)
 }
 
-function showSuccessToast(msg: string) {
+function showToast(kind: "green" | "orange" | "red", msg: string) {
+  const back =
+      kind === "green" ? "#0d0" :
+          kind === "orange" ? "orange" :
+              kind === "red" ? "#f66" :
+                  "#ccc"
+
   const elToast = document.createElement("div")
   elToast.setAttribute("style", "position: fixed; left: 10px; top: 10px; right: 10px; font-family: sans-serif; " +
-      "font-size: 24px; z-index: 2147483647; background: #0d0; border: 3px solid black; padding: 5px; font-weight: bold;")
+      "font-size: 24px; z-index: 2147483647; background: " + back + "; border: 3px solid black; padding: 5px; font-weight: bold;")
   elToast.innerText = msg
   document.body.append(elToast)
   window.setTimeout(() => elToast.remove(), 1500)
 }
 
+
 function run<T>(f: () => T): T {
   return f()
+}
+
+async function copyStuffToClipboard(value: string) {
+  await navigator.clipboard.writeText(value)
+  showToast("green", "Copied stuff to clipboard")
+}
+
+function getContextMenuTargetElement(): HTMLElement {
+  if (!G.contextMenuTargetDomid)
+    throw Error("No G.contextMenuTargetDomid")
+
+  const elTarget = document.getElementById(G.contextMenuTargetDomid)
+  if (!(elTarget instanceof HTMLElement))
+    throw Error("Target is not HTMLElement")
+
+  return elTarget
 }

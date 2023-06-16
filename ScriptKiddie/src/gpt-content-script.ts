@@ -1,11 +1,35 @@
 initIdTrackingOrAssigningContextMenu()
 
 addMenuItemHandler("GPT: Copy quoted paragraph", () => {
-  if (!G.contextMenuTargetDomid)
-    return
+  const elTarget = getContextMenuTargetElement()
   
-  console.log("PARA", G.contextMenuTargetDomid)
+  let p: HTMLElement | undefined
+  for (const el of selfAndParentElements(elTarget)) {
+    if (el.tagName === "P") {
+      p = el
+      break
+    }
+  }
+  
+  if (!p) 
+    throw Error("Expecting <p> tag")
+  
+  let text = ""
+  for (const node of p.childNodes) {
+    if (node.nodeType === Node.TEXT_NODE)
+      text += node.textContent
+    else if (node instanceof HTMLElement) {
+      if (node.tagName === "CODE")
+        text += "`" + node.innerText + "`"
+    }
+  }
+  
+  if (text.startsWith('"') && text.endsWith('"'))
+    text = text.substring(1, text.length - 1)
+  
+  copyStuffToClipboard(text)
 })
+
 
 
 

@@ -38,21 +38,6 @@ chrome.runtime.onMessage.addListener(async (_msg) => {
     }
 });
 chrome.runtime.onInstalled.addListener(function () {
-    defineMessageSendingMenuItem({
-        title: "Jira: Copy attachment link",
-        contexts: ["all"],
-        documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
-    });
-    defineMessageSendingMenuItem({
-        title: "Jira: Copy <DocImg> tag",
-        contexts: ["all"],
-        documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
-    });
-    defineMessageSendingMenuItem({
-        title: "GPT: Copy quoted paragraph",
-        contexts: ["all"],
-        documentUrlPatterns: ["https://chat.openai.com/*"]
-    });
 });
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (typeof info.menuItemId === "string") {
@@ -61,5 +46,20 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             throw Error("Menu item not defined: " + info.menuItemId);
         act();
     }
+});
+defineMessageSendingMenuItem({
+    title: "Jira: Copy attachment link",
+    contexts: ["all"],
+    documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
+});
+defineMessageSendingMenuItem({
+    title: "Jira: Copy <DocImg> tag",
+    contexts: ["all"],
+    documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
+});
+defineMessageSendingMenuItem({
+    title: "GPT: Copy quoted paragraph",
+    contexts: ["all"],
+    documentUrlPatterns: ["https://chat.openai.com/*"]
 });
 //# sourceMappingURL=service_worker.js.map

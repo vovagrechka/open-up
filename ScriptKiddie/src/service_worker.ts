@@ -57,23 +57,6 @@ chrome.runtime.onMessage.addListener(async _msg => {
 })
 
 chrome.runtime.onInstalled.addListener(function () {
-  defineMessageSendingMenuItem({
-    title: "Jira: Copy attachment link",
-    contexts: ["all"],
-    documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
-  })
-
-  defineMessageSendingMenuItem({
-    title: "Jira: Copy <DocImg> tag",
-    contexts: ["all"],
-    documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
-  })
-
-  defineMessageSendingMenuItem({
-    title: "GPT: Copy quoted paragraph",
-    contexts: ["all"],
-    documentUrlPatterns: ["https://chat.openai.com/*"]
-  })
 })
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
@@ -86,3 +69,21 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 })
 
+
+defineMessageSendingMenuItem({
+  title: "Jira: Copy attachment link",
+  contexts: ["all"],
+  documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
+})
+
+defineMessageSendingMenuItem({
+  title: "Jira: Copy <DocImg> tag",
+  contexts: ["all"],
+  documentUrlPatterns: ["https://bydeluxe.atlassian.net/*"],
+})
+
+defineMessageSendingMenuItem({
+  title: "GPT: Copy quoted paragraph",
+  contexts: ["all"],
+  documentUrlPatterns: ["https://chat.openai.com/*"]
+})

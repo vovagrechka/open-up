@@ -18,6 +18,11 @@ addMenuItemHandler("GPT: Copy quoted paragraph", () => {
         else if (node instanceof HTMLElement) {
             if (node.tagName === "CODE")
                 text += "`" + node.innerText + "`";
+            else {
+                const clone = node.cloneNode(true);
+                clone.removeAttribute("id");
+                text += clone.outerHTML;
+            }
         }
     }
     if (text.startsWith('"') && text.endsWith('"'))

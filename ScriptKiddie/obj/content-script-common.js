@@ -20,7 +20,7 @@ function initIdTrackingOrAssigningContextMenu() {
 }
 function initContentScript() {
     window.addEventListener("keydown", e => {
-        if (e.altKey && e.key === "q") {
+        if (e.ctrlKey && e.altKey && e.key === "q") {
             e.preventDefault();
             e.stopPropagation();
             sendMsgToServiceWorker({ action: "reloadExtension" }, () => {

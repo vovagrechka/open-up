@@ -2,6 +2,7 @@ const G = new class {
   elConsole!: HTMLElement
   domidCounter = 1
   contextMenuTargetDomid?: string
+  imageWidthDividedByHeight?: number
 }
 
 initContentScript()

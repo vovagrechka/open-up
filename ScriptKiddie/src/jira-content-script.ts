@@ -9,19 +9,27 @@ addMenuItemHandler("Jira: Copy <DocImg> tag", () => {
     if (url.endsWith(".avi") || url.endsWith(".mp4") || url.endsWith(".webm"))
       tag = "DocVideo"
 
-    return '<' + tag + ' src="' + url + '" width={700}/>'
+    let res = '<' + tag + ' src="' + url + '" width={700}'
+    if (G.imageWidthDividedByHeight)
+      res += " widthDividedByHeight={" + G.imageWidthDividedByHeight + "}"
+    res += "/>"
+    return res
   })
 })
 
 async function handle_menuItem_copyAttachmentSomething(processLink: (_: string) => string) {
+  G.imageWidthDividedByHeight = undefined
+
   const fileName = run<string | undefined>(() => {
     const elTarget = getContextMenuTargetElement()
 
     for (const el of selfAndParentElements(elTarget)) {
       if (el instanceof HTMLImageElement) {
         const s = el.parentElement?.getAttribute("data-test-media-name")
-        if (s)
+        if (s) {
+          G.imageWidthDividedByHeight = el.naturalWidth / el.naturalHeight
           return s
+        }
       }
 
       else if (el.getAttribute("data-type") === "file" && el.getAttribute("data-node-type") === "media") {
